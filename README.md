@@ -1,7 +1,7 @@
-js framework
+DesignPattern
 ===
 
-xxxxxx
+js framework and design pattern
 
 
 
