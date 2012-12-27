@@ -1,4 +1,4 @@
-A Module Loader for the Web
+js framework
 ===
 
 xxxxxx
