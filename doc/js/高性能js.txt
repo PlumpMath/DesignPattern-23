@@ -1,0 +1,267 @@
+*高性能javascript
+第一章：
+1.<script>每次出现都会让页面等待脚本的解析和执行
+  页面的下载和渲染都必须等待<script>的解析和执行
+2.浏览器在解析到<body>之前，不会渲染页面的任何部分，把脚本放到页面顶部会导致明显的延迟
+3.js代码有下载时间和执行时间
+4.IE8、Firefox3.5、Safari4、Chrome2允许并行下载js文件
+5.优化js首要规则：把js放在页面底部，即</body>前
+6.减少<script>脚本数，下载100k比4个25K快
+7.window对象的load事件触发后再下载脚本
+8.带有defer属性的<script>，会等到dom加载完（onload事件触发前），再执行。
+  此脚本下载时不会阻塞页面中其他资源的下载。
+9.XMLHttpRequest脚本注入：利用XHR对象动态创建<script>元素
+  意味着js文件不能从CDN下载，因此大型Web应用通常不会采用XHR脚本注入技术
+10.无阻塞模式：
+   <script type="text/javascript" scr="loader.js"></script>
+   <script type="text/javascript">
+       loadScript("the-rest.js",function(){
+           Application.init();
+       });
+   </script>
+
+第二章
+1.当一个函数创建后，他的作用域链会被创建此函数的作用域中可访问的数据对象所填充
+2.运行期上下文对象：
+  函数每次执行时对应的运行期上下文都是独一无二的，每次运行函数创建不同的运行期上下文
+  函数执行完毕后，运行期上下文被销毁
+  每个运行期上下文都有自己的作用域链
+  这些值按照他们出现在函数中的顺序，被复制到运行期上下文的作用域链中
+3.活动对象：
+  处于运行期上下文对象，的作用域链中的顶端（之后才是运行的函数的作用域对象）
+  当运行期上下文销毁，活动对象也随之销毁
+4.没遇到一个变量，都有经历一次标识符解析过程，以决定从哪里获取或存储数据。
+  搜索过程从作用域链头部开始，这个搜索过程会影响性能
+5.函数中读写局部变量是最快的，读写全局变量是最慢的
+  全局变量总是位于运行期上下文作用域链的最末端
+6.如果某个跨作用域的值在函数中被引用一次以上，那么就把它存储到局部变量里
+7.改变作用域链
+  with语句：一个新的活动对象被创建，并推入所有作用域链的头部（因此影响性能，虽然编码方便了）
+            with(document){var a=1;}//使得访问document里的属性非常快，而访问a变慢了
+  catch子句：执行过程到catch子句后，把异常对象推入活动对象，并置于作用域的头部
+             因此catch里对异常的处理，最好委托给某个函数处理
+8.动态作用域：
+  只存在于代码执行过程中，无法通过静态分析（查看代码）检测出来
+  eval函数、withc语句、catch子句、
+  只有确实有必要时才使用动态作用域
+9.闭包
+  js最强大的特性之一
+  运行函数访问局部作用域之外的数据
+  在函数运行时被创建，并且有与此函数的上下文对象相同的作用域，即：闭包被创建时，作用域链中就有此函数的活动对象
+  闭包导致内存问题的原因：由于闭包有函数的活动对象的引用，所有函数运行完后，函数的活动对象没有同运行期上下文对象一同销毁（此函数的运行期上下文对象也应该没有被销毁）
+  IE使用非原生js对象来实现DOM对象，因此闭包会导致内存泄露
+  闭包性能关注点：经常访问大量跨作用域的标识符，每次访问都会导致性能损失
+  小心使用闭包：关系内存和速度
+
+第三章
+1.减少访问DOM的次数，把运算尽量留在ECMAScript这一端处理
+2.createElement与innerHTML的性能差不多
+3.大多数浏览器中，节点克隆都更有效率
+4.HTML集合：
+  document.images、document.links、document.forms、document.forms[0].elements（第一个表单的所有字段）
+  这些集合并不是真正的数组
+  HTML集合一直与文档保持者连接。因此每次访问length都会从新扫描，影响性能。（即：昂贵的集合）
+  遍历一个数组的速度明显快于遍历一个HTML集合
+5.遍历DOM使用jquery
+  最新的浏览器提供了querySelectorAll()的原生DOM方法，这种方式比js和dom遍历元素快很多
+6.一旦DOM和渲染树构建完成，浏览器就开始paint页面元素
+7.dom修改->渲染树修改->重绘repaint
+  重绘repaint和重排reflow都是代价昂贵的操作
+8.需要返回最新的布局信息，浏览器不能不执行渲染队列中的“待处理变化”，并触发重排以返回正确的值，有如下属性
+  offsetTop offsetLeft offsetWidth offsetHeight
+  scrollTop scrollLeft scrollWidth scrollHeight
+  clientTop clientLeft clientWidth clientHeight
+  getComputedStyle()(currentStyle in IE)  
+9.提高性能：
+  减少重绘repaint和重排reflow操作，合并多次对DOM和样式的修改
+  如：el.style.cssText='border-left:1px; border-right:2px; padding:5px;'
+10.是DOM脱离文档
+  隐藏元素，应用修改，重新显示
+  使用文档片段（document fragment）构建子树，再拷贝回文档
+  将元素拷贝到一个脱离文档的节点中，修改副本，再替换原始元素
+11.缓存局部信息，不再查询偏移量
+12.避免页面中的大部分重排
+   使用绝对位置定位页面上的动画元素，将其脱离文档流
+   让元素动起来
+   当动画结束时恢复定位，从而只会下移一次文档的其他元素  
+13.从IE7开始，IE允许在任何元素（严格模式下）上使用:hover这个CSS伪选择器
+   当大量元素使用了:hover，会降低响应速度
+14.事件委托
+   每绑定一个事件处理器都是有代价的（使用事件委托来减少事件处理器的数量）
+   只需给外层元素绑定一个处理器，就可以处理在其子元素上触发的所有事件
+   添加一个事件处理器到父级元素，由它接收所有子节点的事件消息（检查事件是否来自你所预期的元素）
+   阻止默认动作
+  
+第四章
+1.for(var prop in object){}
+  for-in循环比其他几种循环明显要慢，只有其他速度的1/7
+  只有迭代未知属性的对象时才用
+  不要用for-in遍历数组
+2.减少每次迭代中的操作，能大幅度提高循环的总体性能（如：for(){fun(arg)}）
+  优化循环：减少对象成员及数组项的查找次数。（如：for(var i=0,len=items.length;i<len;i++)）
+            倒序循环是编程语言中一种通用的性能优化方法
+            达夫设备(Duff's Device)：循环超过1000，能减少70%的时间（减少循环的次数，如：for(){fun(i++);fun(i++);}）
+  基于循环的迭代比基于函数的迭代快8倍（基于函数的迭代：items.forEach(function(value,index,array){fun()})）
+3.条件数量越大，越倾向于使用switch而不是if-else
+4.优化if-else：使用判值中间取值法（类似二分查找，自命名：二分条件判断法）
+5.通过查找表访问数据比使用if-else、switch快很多。
+  表查找有点：不用书写任何条件判断语句，即便候选值数量增加时，也几乎不会产生额外的性能开销
+6.递归函数，可能遇到浏览器的“调用栈大小限制”(Call stack size limites)  
+  IE: Stack overflow at line x
+  fireforx: Too much recursion
+  Safari: Maximum call stack size exceeded
+  Opera: Abort(control stack overflow)
+  Chrome: 不显示调用栈溢出
+  能用try-catch捕获调用栈溢出异常
+  任何递归能实现的算法，都能使用迭代来实现
+  运行一个循环比反复调用一个函数的性能开销小很多
+  Memoization: 一种避免重复工作的方法，它缓存前一个计算结果供后续计算使用，避免了重复工作。
+  
+第五章
+1.数组项连接比其他字符串连接方法更慢（IE7及之前版本，却是最高效的）
+2.concat比使用+和+=稍慢，尤其是在IE中
+3.不同浏览器对正则表达式引擎有着不同程度的内部优化
+4.正则表达式处理步骤：
+  编译：你把正则对象赋值给一个变量，就能避免执行此步骤
+  设置起始位置：
+  匹配每个正则表达式字元：正则表达式试着回溯到之前尝试匹配的位置上，然后尝试其他可能的途径
+  匹配成功或失败：
+
+第六章
+1.浏览器UI线程
+  用于执行js和更新用户界面的进程
+  UI线程基于一个简单的队列系统，任务会被保存到队列中直到进程空闲
+2.单个js操作花费的总时间，不应该超过100ms
+3.有些浏览器在js运行时，不会把UI更新任务加入队列
+4.IE会控制用户交互行为触发的js任务，因此它会识别连续两次的重复动作
+5.定时器
+  定时器代码只有在创建它的函数执行完成之后，才有可能被执行
+6.Web Workers
+  js诞生以来，还没有办法在浏览器UI线程之外运行代码
+  Web Workers API能使代码运行且不占用浏览器UI线程的时间（是HTML5的一部分）
+  Web Workers没有绑定UI线程，这也意味着他们不能访问浏览器的许多资源。
+  js和UI共享同一进程的部分原因：他们之间互相访问频繁
+
+第七章
+1.五种请求数据技术：
+  XMLHttpRequest(XHR):
+  Dynamic script tag insertion 动态脚本注入：能跨域请求数据
+  iframes
+  Comet
+  Multipart XHR：一个HTTP请求从服务器端向客户端传递多个资源（启动一个定时器，每隔15ms检查一次readyState，收集数据片段，直到发现一个分隔符，数据作为一个完整资源）
+                 比独自请求资源方式快4到10倍
+                 最大的缺点：这种方式得到的资源数据不被浏览器缓存
+2.Beacons
+  (new Image()).src=url+'?'+params.join('&');
+  只发送数据
+  信标是向服务器回传数据最快且最有效的方式，服务器根本不需要发送任何响应正文
+3.XML
+  相比其他格式，XML极其冗长
+  相比使用子标签，使用属性时文件更小，解析速度更快
+4.JSON
+  在代码中直接使用eval是很危险的
+  可以把json的属性名缩短（可读性差）
+  进一步，可以去掉属性名
+  JSON填充(json-p)：JSON with padding
+  使用json-p方式比eval，解析速度快10倍（下载速度一样）
+  json是高性能Ajax的基础，尤其在使用动态脚本注入时
+5.HTML
+  在服务器上构建好整个HTML再传回客户端，js可以很方便地通过innerHTML属性把它插入页面相应的位置。
+  HTML是一种臃肿的数据格式，比xml更繁杂（作为一种数据格式，即缓慢又臃肿）
+  在客户端的瓶颈是CPU而不是带宽时，才使用此技术
+6.自定义数据格式
+  数据/结构的比例相当高（比如：1:alice:smith:alice@alicesmith.com;）
+  在数毫米内处理包含10000+个元素的分隔符分隔
+  需要在很短的时间向客户端传送大量数据时，可以考虑使用这种格式
+7.缓存
+  设置HTTP头信息：Expires:Mon,28 Jul 2014 23:30:00 GMT 
+  移动设备上的浏览器缓存都很小，做好选择手工管理缓存
+8.Ajax
+  很多库都不能访问XMLHttpRequest的完整功能
+  不使用Ajax类库，可能在一些古怪的浏览器上碰到问题  
+  加速ajax：减少请求数
+            缩短页面的加载时间
+            确保你的代码错误不会输出给用户
+            知道何时使用成熟的Ajax类库，何时编写自己的Ajax底层代码
+
+第八章
+1.双重求职是一项代价昂贵的操作（eval("xxxx;")）
+2.创建一个新的解释器/编译器的函数：
+  eval(),Function(),setTimeout(),setInterval()
+  建议传入函数而不是字符串作为第一个参数
+  js运行期性能优化的关键：避免双重求值
+3.使用对象和数组直接量是最快的方式
+4.避免无所谓的工作：a别做无关紧要的工作；b别重复做已经完成的工作
+  消除函数中重复工作的方法：延迟加载（lazy loading，在函数中覆盖当前函数）
+  条件预加载（conditional advanceloading，根据条件设置变量的具体函数）
+5.js中的数字都是依照IEEE-754标准，以64位格式存储
+6.数字转二进制：var num=1;num.toString(2);
+  位运算符：&、|、^、~、<<、>>（如：i%2改为i&1；）（如：位掩码，var option_a=1,option_b=2; var options=option_a|option_b; if(options & option_a){}）
+  js原生方法永远是最快的，特别是数学运算和DOM操作（如：Math对象中的函数）（jQuery引擎速度还是不如原生的querySelector()和querySelectorAll()）
+  用编译后的代码做的事情越多，代码的速度越快
+
+第九章
+1.自动化构建工具：Apache Ant
+2.合并多个js文件：ant的concat任务<target><concat /></target>
+  网站提速，第一规则：减少页面渲染所需的HTTP请求数
+3.预处理js文件：在ant中使用C预处理器（cpp）
+4.js压缩：YUI Compressor（替换局部变量，使用点号访问熟悉，去掉不必要的符号，合并常量）
+  使用YUI Compressor合并再用Gzip压缩是最佳选择。Packer可以用在网速较慢或不支持Gzip的情况下
+5.缓存js文件：web服务器通过"Expires HTTP响应头"告诉客户端一个资源应该缓存的时间
+6.给js文件名加时间戳：<target><copy /></target>
+7.内容分发网络：CDN（一些常用的js可以通过Google的CDN获得：ajax.googleapis.com）
+8.敏捷js构建：smasher（php5编写）
+
+第十章
+1.性能分析：在脚本运行期间定时执行各种函数和操作，找出需要优化的部分
+2.网络分析：检查图片、样式表、脚本的加载过程，以及对页面整体加载和渲染的影响
+3.js语言本身就是一工具
+4.性能分析工具：
+  YUI Profiler（js编写的）
+5.分析匿名函数最佳办法：给匿名函数取名
+6.Console API
+  console.profile('regexTest');
+  regexTest('foobar','foo');
+  console.profileEnd();
+  console.profile('indexOfTest');
+  indexOfTest('foobar','foo');
+  console.profileEnd();
+7.Net分析工具：每个文件的颜色条，分为，dom下载过程、load事件触发过程
+  每个脚本看上去都在等待前一个脚本下载完后才发起一个请求
+  提高加载性能的最简单办法：减少请求数（尤其是js和css的请求，因为他们会阻塞其他资源及页面渲染）
+8.Start Profiling 开始采样：可分析每个函数运行情况
+9.堆快照：
+10.Page Speed：
+   累世firebug的网络面板，提供web页面加载的资源的信息
+   google内部开发用的工具，目前是firebug插件
+11.Fiddler：
+   所有的WinINET（使用HTTP/FTP协议访问Internet的API）通信将经过Fiddler中转
+   任何运行设置代理的程序都可以使用Fiddler监控功能（代理设置指向127.0.0.1:8888）
+   长时间的DNS解析和TCP/IP连接可能意味着网络问题
+12.YSlow：
+   深入观察页面初始加载和运行过程的整体性能
+   Yahoo内部开发使用，目前是firebug插件   
+13.dynaTrace Ajax Edition:
+   是一个强大的Java/.NET性能诊断工具
+   可以深入到特定的事件（load、click、mouseover等），去发现运行期性能问题的根本原因
+14.传统的经验告诉我们尽量减少HTTP请求数，但是脚本尽可能延迟加载可以加快页面渲染速度，用户体验更好
+   检查每个函数所消耗的时间，以及函数被调用的次数，通过调用栈自身提供的一些线索来找出需要集中精力优化的地方
+
+
+啊德莫色德，露啦莫咋啦
+
+
+
+  
+  神马叫青春，那是因为有叛逆，就是明知是对的，偏不相信，直到有一天，发现，相信这些对的真好，可惜我已不再是年少了！
+  
+  用5天的xxx去抚摸2天的伤痛，这是我的一周
+  
+  
+  
+  
+  
+  
+  
+  
+  

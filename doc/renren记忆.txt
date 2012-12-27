@@ -1,0 +1,170 @@
+*
+业务：
+
+系统介绍：
+该系统是一套充分利用检察业务专网，采用三层构架设计开发，依托于首都检察网平台，把全市核心应用集中与各院个性应用分布相结合，实现案件网上办理、动态管理和全程控制的综合性信息管理系统软件。
+
+业务子系统介绍：
+侦查监督业务系统是检察综合业务管理系统其中的一个主要子系统，覆盖了审查逮捕、特殊案件、立案监督、复议案件、复核案件、延长羁押审批、个案指导等各项工作。系统严格依据相关法规，规范各类案件办理阶段的业务程序，实现各类案件从收案、分案、承办、审查、结案到归档等各个环节的网上办理以及统计分析报表，确保办案工作的有序、规范进行.
+
+业务组件介绍：
+通过定制查询条件，实现了灵活查询案件的功能。
+
+
+
+最高人民法院有两个办公场所，院内法官经常往返于两地办公，出勤情况不好管理。为此，最高法院政治部XX公司上了一套考勤刷卡的设备。处于安全等各发面的考虑，XX公司分别在建了两套独立的局域网和考勤刷卡设备，分别生成一份考勤数据。
+由于法官经常往返于两地办公，就可能出两地刷卡现象。目前的工作方式是：手工统计整理两份数据上报政治部。
+科技处委托开发一套考勤系统，工作方式是：驻地每天早上将上一天的两份刷卡数据（access数据库文件）拷贝到FTP上，考勤系统获取access文件，汇总统计上报数据。
+
+
+np系统整体介绍：
+在最高检统一软件的背景下，需要公司在年内交付给最高检一个可进行二次开发的平台，这个平台要能够满足跨部门、跨单位协同作业的需要；要能够支撑各级检察院的基础办案业务需求；并且在全国统一的基础上能够满足各级院的差异化需求。
+
+主要分为如下几个部分：artery平台、NP技术平台(不依赖artery)、电子检务业务平台、业务系统、配置维护工具。
+artery平台：表单制作开发，数据字典，表间关系、ssh框架
+NP技术平台：法检通用解决方案，包括：公用的业务组件、技术组件
+电子检务业务平台：np-jcy项目整体框架，责任链模式
+业务系统：各个业务子系统
+维护工具：工作流发布工具、文书制作工具、后台维护
+
+
+*
+敏捷开发
+原则：
+1.个体与交互 胜过 过程与工具
+2.可以工作的软件 胜过 面面俱到的文档
+3.客户协作 胜过 合同谈判
+4.相应变化 胜过 遵循计划
+即：与客户紧密协作、高迭代、增量开发、测试驱动开发
+
+scrum：
+敏捷开发框架
+每个迭代周期称为一个sprint
+使用产品backlog管理需求：商业价值排序需求列表
+每日站立会议
+流程：开发调研、工作量估算、发布计划会议、sprint计划会议、sprint、sprint评审会议、sprint回顾会议
+
+
+
+*
+消息提醒组件
+JMS
+1.非实时的消息（原因：各级院环境不同，要支持多种中间件，tomcat或者webShpere，tomcat中实现comet消息推送的方式，与其它中间件可能不同）
+//TODO 复习Comet具体实现过程
+
+消息平台组件
+1.能够多种发送消息：cocall、短信、系统消息
+  支持cocall，需要调用cocall.jar(jni的本地方法，本地安装了cocall)
+2.表结构：配置表、消息表（模板表，想支持EL表单式）
+//TODO 复习表字段、实现支持EL表单式
+
+*
+RMI
+webService
+
+*
+JNI
+JNA
+
+*
+apache commons
+
+*
+mysql：
+jdbc：java data base connectivty 数据库连接规范
+hibernate：ORM框架
+  JPA是sun提的ORM规范，hibernate已经获取JPA认证，JPA属于hiberate的子集，JPA定义了JPQL
+  所以的ORM都是对JDBC的封装
+连接池：c3po与dbcp（使用tomcat的连接池，得配合JNDI，tomcat是用JNDI的方式提供数据源）
+  dbcp没有自动的去回收空闲连接的功能 　　
+  c3po有自动回收空闲连接功能
+sql：
+
+
+
+*
+ssh
+struct：
+summer：
+spring MVC：
+spring AOP：分散在各个业务逻辑中的关注点，封装起来，业务逻辑代码中不在含调用（事物、安全）
+    实现技术：字节码框架BCEL、ASM，直接与虚拟机指令打交道；字节码处理工具：CGLib、Javassist
+    类加载器：
+    动态代理：可以针对某个对象做代理，所以代理最后落地到某个对象的方法调用上
+    实例：写一个类，用一个方法来组织需要作为同一个事物的操作，再代理这个类的这个方法
+ioc/DI：
+Artery（主干道）：电子政务MIS（Management Information System）系统构建平台，主要是表单开发平台，和一些基础构件：组织机构、权限角色管理、日志管理、样式管理
+                  基于开源框架SSH，ExtJS
+		  。。。
+
+*
+Linux
+Tomcat/Resin
+
+*
+设计模式
+
+*
+http
+jsp
+servlet
+xml
+javascript:
+    单线程运行；执行引擎线程、UI渲染线程、定时触发线程、事件触发线程
+    异步ajax，是XMLHTTPRequest新开一线程
+  new操作符创建了一个对象，紧接着就将这个对象作为this参数调用了后面的函数
+  Call/apply实现继承
+    原生对象、xx对象；5种简单数据类型、1种复杂数据类型
+    加上圆括号的目的是迫使eval函数在评估JavaScript代码的时候强制将括号内的表达式转化为对象
+  prototype上的属性是多个对象共享的，原型链的末端是object对象的prototype
+    同源策略：阻止一个域上的脚本获取或操作另一个域上的dom
+  this默认绑定的是当前方法所在的那个对象(method.Call(scope)可以指定method中this，即：把method中的this=scope)
+    闭包：内部函数即使在外部函数执行完成并终止之后,仍然可以访问其外部函数的属性。作用：1.函数a中的变量只能在返回的函数b中访问 2.在内存中维持一个变量。
+       (当函数a的内部函数b被函数a外的一个变量引用的时候，就创建了一个闭包)
+    每个function被创建时都有一个prototype对象，此对象有一个属性constructor指向函数本身，而且每个函数都有自己的作用域属性scope，用来保存活动对象链（活动对象：可以认为是window对象和Function的实例对象）
+  arguments.callee指代当前函数，可用于递归
+  function.caller指当前函数的调用者
+  js引擎：V8(Google)C++、Rhino(Mozilla)Java、V8封装(Node.js)C++
+dom
+  document.location.href
+  window.showModalDialog
+  window.name 解决跨域问题，可存储2M
+  W3C dom 的addEventListener("eventType",listenerReference,captureFlag);
+  btn.fireEvent("onclick",event);
+
+*
+多线程
+JVM
+JVM调优
+
+
+*
+其他：
+Java EE：（Java Platform，Enterprise Edition）在 Java SE 的基础上构建的，它提供 Web 服务、组件模型、管理和通信 API，可以用来实现企业级的面向服务体系结构（service-oriented architecture，SOA）和 Web 2.0 应用程序
+EJB(Enterprise JavaBeans)
+Java RMI(Java Remote Method Invocation)
+JNDI：Java Naming and Directory Interface,由web容器提供
+     Context env=(Context)new InitialContext().lookup("java:comp/env");
+     DataSource pool=(DataSource)env.lookup("jdbc/DBPool");
+JMAPI（Java Management API）
+JMX：Java Management Extensions为应用程序、设备、系统等植入管理功能的框架
+JMS(Java Message Service)同JTA，为J2EE平台提供了分布式事务服务
+JTA：(Java Transaction API)一个JTA事务可以有多个参与者，而一个JDBC事务则被限定在一个单一的数据库连接
+JTS(Java transaction Service)
+JMF(Java Media Framework API)
+JPA (Java Persistence API)
+Annotation(Java Annotation)java注解处理器，1.5新加
+
+*
+概念：
+函数式编程：
+数据结构：
+    平衡树：balanced search tree 能够一直维持好身材, 不因新增删除而长歪的“搜寻树”
+  B数：balanced tree 为了减小树的高度
+    二叉平衡树：Balanced Binary Tree，它的左右两个子树的高度差的绝对值不超过1
+         红黑树：自平衡二叉查找树，对称二叉B树
+
+*
+其他工具改为常用工具
+
+

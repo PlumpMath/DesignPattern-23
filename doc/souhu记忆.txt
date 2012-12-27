@@ -1,0 +1,54 @@
+1.三大web服务器
+Apache(取自a patchy server的读音)
+后台服务器（主要处理php及一些功能请求如：中文url）
+基于文件的配置httpd.conf
+HTTPD（Hyper Text Transfer Protocol Daemon ）
+支持虚拟主机
+支持http认证ssl
+集成perl
+集成的代理服务器
+支持java servlets
+不支持epoll（这年头，epoll几乎是性能的必备，这也就是性能差的原因）
+好用的proxy和proxy_ajp（很多人用来作tomcat的前端）
+
+
+Nginx：
+前端服务器（利用它占用系统资源少得优势处理静态页面的大量请求）
+等到功能完善的时候，就是主流了
+十分轻量级的HTTP服务器
+高性能的HTTP和反向代理服务器，也是IMAP/POP3/SMTP代理服务器
+一事件驱动的方式编写
+不支持CGI方式运行。必须使用FastCGI方式来执行PHP程序
+支持内核Poll模型，能支持高达50000个并发连接数，占用资源少
+支持热部署，7*24小时不间断运行
+
+
+Lighttpd：
+图片服务器
+轻量级的web server
+支持fastCGI，CGI，Auth，URL重写，Alias
+使用fastCGI方式运行PHP，使用很少的php进程响应很大的并发量
+
+
+
+
+cgi (Common Gateway Interface) 通用网关接口。
+物理上是一段程序，运行在服务器上，提供同客户端HTML页面的接口。
+CGI可以用任何一种语言编写（Perl、PHP、C等，C是首选），只要这种语言具有标准输入、输出和环境变量。
+!!!
+注:java的servlet需要tomcat这样的servlet容器来支持，才能达到cgi的作用。当然也可以自己手工用java实现cgi,而不用按照j2ee的servlet规范写servlet。
+
+
+fastcgi像是一个常驻(long-live)型的CGI
+FastCGI是语言无关的、可伸缩架构的CGI开放扩展
+主要行为是将CGI解释器进程保持在内存中并因此获得较高的性能
+因为是多进程，所以比CGI多线程消耗更多的服务器内存
+Nginx 0.8.46+PHP 5.2.14(FastCGI)服务器在3万并发连接下，开启的10个Nginx进程消耗150M内存（15M*10=150M），开启的64个php-cgi进程消耗1280M内存（20M*64=1280M），加上系统自身消耗的内存，总共消耗不到2GB内存。如果服务器内存较小，完全可以只开启25个php-cgi进程，这样php-cgi消耗的总内存数才500M。
+
+
+http认证：发给服务器端的消息头多了Authorization：credentials（认证信息）
+
+
+
+
+

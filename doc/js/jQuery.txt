@@ -1,0 +1,8 @@
+*
+启动函数，代替window.onload()
+$(document).ready(function(){
+...
+})
+
+常用函数使用$开头
+

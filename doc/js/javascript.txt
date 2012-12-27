@@ -1,0 +1,574 @@
+*
+1.JavaScript引擎是单线程运行的,浏览器无论在什么时候都只且只有一个线程在运行JavaScript程序
+2.使用定时函数模仿多线程（还是模拟不了多线程的，只有执行完一个function才会去执行另外一个function）
+
+
+
+*
+1.浏览器中的JavaScript引擎是基于事件驱动的,这里的事件可看作是浏览器派给它的各种任务
+	<1>这些任务可以源自JavaScript引擎当前执行的代码块:
+		a.如调用setTimeout添加一个任务;
+	<2>也可来自浏览器内核的其它线程:
+		a.如界面元素鼠标点击事件,
+		b.定时触发器时间到达通知,
+		c.异步请求状态变更通知等.
+		
+		
+		
+*
+1.GUI渲染线程与JavaScript引擎线程是互斥的（因为JavaScript脚本是可操纵DOM元素,在修改这些元素属性同时渲染界面,那么渲染线程前后获得的元素数据就可能不一致了）
+2.GUI事件触发线程与JavaScript引擎线程是不互斥的（JavaScript脚本的执行不影响html元素事件的触发）
+3.定时触发线程与JavaScript引擎线程是不互斥的（JavaScript引擎是单线程的,处于阻塞线程状态就计不了时,定时事件也是异步事件）
+
+
+*
+JavaScript引擎来说,在处理队列中的各任务处理方式都是一样的,只是处理的次序不同而已
+
+
+*
+1.ajax异步请求:由浏览器为XMLHttpRequest新开了一个线程
+2.JavaScript引擎始终是单线程运行回调函数,具体点即还是单线程运行onreadystatechange所设置的函数
+
+
+*
+JavaScript中的函数运行在它们被定义的作用域里,而不是它们被执行的作用域里
+
+
+*
+cookie
+1.一个cookie 实际就是一个字符串属性,一次就得到了属于当前文档的所有cookies。
+	(当你读取cookie的值时，就得到一个字符串，里面当前WEB页使用的所有cookies的名称和值)
+2.每个cookie除了 name名称和value值这两个属性以外，还有四个属性。这些属性是： expires过期时间、 path路径、 domain域、以及 secure安全。
+3.一个完整的cookie格式  ----  名称=<值>[; expires=<日期>][; domain=<域>][; path=<路径>][; 安全]  
+	(可以用任何顺序设置)
+4.使用js设置cookie格式  ----  document.cookie = "username=" + escape(form.username.value);  
+	( escape() 函数非常重要，因为cookie值里可能包含分号、逗号或者空格。)
+5.使用js读取cookie格式  ----  var allcookies = document.cookie;
+6.设置过期时间(15分钟)：
+	var expiration = new Date((new Date()).getTime() + 15 * 60000); 
+	expires = expiration.toGMTString();
+7.找别人写好的cookie操作类
+8.第1行是Cookie名称。
+	第2行是Cookie的值。
+	第3行是Cookie所属站点的地址。
+	第4行是个标记值。
+	第5行为过期时间的低位(时间为Windows下的FILETIME格式)。
+	第6行为过期时间的高位。
+	第7行为创建时间的低位。
+	第8行为创建时间的高位。
+	第9行总是为"*"，Cookie记录分隔符(一个Cookies文件可以记录多个记录结构)。
+9.win7的cookie路径
+%userprofile%\AppData\Roaming\Microsoft\Windows\Cookies
+
+
+*
+cookie试验结果
+1.document.cookie得到sky@~~local~~[4].txt中的所有记录的名称=<值> （每个"*"代表一条记录）
+2.cookie是根据“名称=<值>”中的“名称”来唯一定位sky@~~local~~[4].txt中的记录
+
+
+*
+cookie欺骗
+
+
+*
+简单数据类型不是对象，所谓“对象化”，就是可以将数据和代码组织成复杂结构的能力。
+
+
+*
+null与undefined
+1.null是关键字；undefined是Global对象的一个属性;
+2.null是对象(空对象, 没有任何属性和方法)，undefined是undefined类型; 
+3对象模型中，所有的对象都是Object或其子类的实例，但null对象例外;
+4.null“等值(==)”于undefined，但不“全等值(===)”于undefined;
+5.运算时null与undefined都可以被类型转换为false，但不等值于false。
+
+
+*
+JavaScript的“预编译”:在同一段程序的分析执行中，定义式的函数语句会被提取出来优先执行。函数定义执行完之后，才会按顺序执行其他语句代码。
+
+
+*
+函数与对象
+1.完全可以把函数当对象来用（function类型的东西都是和object类型一样的东西，这种东西被我们称为“对象”）
+2.函数比一般的对象多了一个括号“()”操作符，这个操作符用来执行函数的逻辑
+3.对象量子论，那么答案一定是：波粒二象性！(函数既有对象的性质又有数组的性质)
+
+
+*
+对象和函数可以象数组一样，用属性名或方法名作为下标来访问并处理
+1.可以将对象当数组以属性名作为下标来访问属性 //alert(anObject["aProperty"]);
+2.可以将对象当数组以方法名作为下标来调用方法 //anObject["aMethod"]();
+3.可以将函数当数组以属性名作为下标来访问属性 //alert(aFunction["aProperty"]);
+4.可以将函数当数组以方法名作为下标来调用方法 //aFunction["aMethod"](); 
+
+
+*
+构造函数
+1.可以使用 new 关键字来调用一个构造函数
+2.var object=new functionName();  //new操作符创建了一个对象，紧接着就将这个对象作为this参数调用了后面的函数
+
+
+*
+new
+1.var object=new functionName();等同于 
+  var object=new functionName;等同于 
+  var object=Function(){...};object(); 等同于 
+  var object=functionName;object();
+2.我们就可以这样理解，JavaScript先用new操作符创建了一个对象，紧接着就将这个对象作为this参数调用了后面的函数。(JavaScript内部就是这么做的)
+	function MyFunc(){};var anObj = new MyFunc(); 等同于
+	function MyFunc(){};var anObj = {};MyFunc.call(anObj); //new一对象，就是把一函数的所有属性都给一空对象。
+3.通过使用 new 去调用函数，对象会持有一个无意义的原型对象。这只会浪费内存而不会带来任何好处。
+4.唯一需要用new的地方：适用构造函数——即new可以把代码变数据（或者说是函数变对象）
+
+
+*
+JavaScript里的对象就是字典结构,JSON就是JavaScript对象最好的序列化形式
+
+
+*
+call
+1.把a对象的方法放到b对象上执行，那么b对象上的属性被a对象的方法使用了  //a对象.方法名.call(b对象); 
+2.通过call实现继承，b对象继承a对象   //在b对象中写：a对象.call(this);
+3.适用两个call实现多继承
+
+
+*
+类与对象
+1.JavaScript的函数具有“类”的所有特征。
+2.用构造函数操作this对象创建出来的每一个对象，每一个对象中都存在一个副本（都有各自的成员变量和方法，即——对象）
+
+
+*
+关键字
+1.JavaScript的关键字都是小写
+2.null，instanceof，debugger，typeof，function，也是关键字
+3.undefined是一种简单数据类型，是Global对象的一个属性
+
+
+*
+内置对象
+1.JavaScript内置对象都是大写字母开头
+2.Object，Function，Number，String，是内置对象
+
+
+*
+alert
+1.alert是window对象的方法
+2.alert(new String("abc"));返回的是: abc
+3.alert(var a=[1,2,3]);返回的是: 1,2,3
+
+
+*
+event
+1.event是window对象的对象
+2.获取当前鼠标位子：window.event.clientX   window.event.clientY
+
+
+*
+JavaScript
+1.JavaScript有5种简单数据类型:undefined,null,boolean,number,string
+2.JavaScript有1种复杂数据类型:object （包括：数组、内置对象－即new '类名'、json）
+3.JavaScript代码只有一种类型:function （包括：“类”）
+4.typeof(undefined)返回undefined
+  typeof(null)返回object
+  typeof(var boolean)返回boolean  （需要定义一个变量）
+  typeof(NaN)和typeof(Infinity)返回number   （都是形容数据的：not a number,无穷的）
+  typeof(var string)返回string   （需要定义一个变量）
+  typeof(function functionA)返回function   （需要定义一个函数）
+  注：typeof返回的只有undefined,null,boolean,number,string，object和function（数组返回的是object）
+
+
+*
+//JavaScript就不应该与面向对象的语言去比较——new可以把代码变数据（或者说是函数变对象），
+function定义的所谓代码，其实是一个特殊的对象,即有一个prototype属性
+http://blog.csdn.net/niuyongjie/archive/2009/11/15/4810835.aspx
+
+
+*
+eval
+1.eval函数将把最后一个表达式或者语句所包含的值或引用作为返回值。
+2.加上圆括号的目的是迫使eval函数在评估JavaScript代码的时候强制将括号内的表达式转化为对象，而不是作为语句来执行。举一个例子，例如对象字面量{}，如若不加外层的括号，那么eval会将大括号识别为JavaScript代码块的开始和结束标记，那么{}将会被认为是执行了一句空语句。
+
+
+*
+得到对象的所有属性
+for(x in 对象名)alert(x); //取得属性名
+for(x in 对象名)alert(对象名[x]);//取得属性值
+
+
+*
+prototype
+1.构造函数的prototype上定义的方法可以通过对象直接调用到，而且代码是共享的
+2.当从一个对象那里读取属性或调用方法时，如果该对象自身不存在这样的属性或方法，就会去自己关联的prototype对象那里寻找；如果 prototype没有，又会去prototype自己关联的前辈prototype那里寻找，直到找到或追溯过程结束为止
+3.在JavaScript内部，对象的属性和方法追溯机制是通过所谓的prototype链来实现的
+4.对象内置的原型对象应该是对外不可见的(除firefox)
+5.原型链的最末端，就是Object构造函数prototype属性指向的那一个原型对像
+6.使用prototype动态扩展的方法即可被先前建立的对象立即调用（prototype机制是动态的，可以根据需要在运行时配置，而无需重新编译，可以在需要时向对象添加属性和函数）
+7.给JavaScript内置对象添加属性
+	String.prototype.trim = function String$trim() {
+    if (arguments.length !== 0) throw Error.parameterCount();
+    return this.replace(/^\s+|\s+$/g, '');
+	}
+	注：JavaScript是动态对象语言，指的是可以动态的为一个已经存在的对象添加属性
+8.在一个function中，定义私有变量用“var 变量名;”，定义公有属性用“this.属性名;”
+9.JavaScript组织代码的风格：
+  a.闭包模型：在函数体内使用this属性来创建“类”的方法			（代码优美，但是内存管理较乱）
+	b.原型模型：在函数体外使用prototype属性来创建“类”的方法	（代码较乱，但无内存管理问题）
+	c.JSON形式：直接添加方法，创建一个对象										（代码优美，但是只是一个实体）
+
+	
+*
+constructor
+1.var test=new Boolean();test.constructor==Boolean;//可理解为类名，即java中的obj.class（constructor是用function的原型——即此函数的具体代码，常称为此类(其实就是此函数名)的构造方法）
+2.function有一个prototype属性，使用new生成的对象就没有这个prototype属性（只有function类型才有prototype属性）
+3.function定义的对象中有prototype属性，这个prototype属性指向一个prototype对象
+4.prototype对象中有一个constructor属性，这个constructor属性指向一个constructor对象
+
+
+*
+$,是指prototype定义的一类方法
+$("id")  得到的是页面id为"id"的元素
+$F("id") 得到的是页面id为"id"的元素的值,这是只读的,不可写
+
+
+*
+运算符
+new 				（1.创建一个没有成员的对象。 2.为那个对象调用构造函数，传递一个指针给新创建的对象作为 this 指针。 3.然后构造函数根据传递给它的参数初始化该对象。）
+typeof			（typeof 语法中的圆括号是可选项）
+void				（运算符对表达式求值，并返回 undefined）
+instanceof	（object 是 class 的一个实例，则 instanceof 运算符返回 true。格式：instanceof object）
+delete			（从对象中删除一个属性，或从数组中删除一个元素。格式：delete expression）
+
+
+*
+页面路径
+var parent_url = window.parent.location.href.toLowerCase();
+var where = document.referrer.toLowerCase();
+var self_url = document.location.href.toLowerCase();
+
+
+*
+javascript内存泄露
+
+
+*
+同源策略
+1.a同源策略阻止从一个域上加载的脚本（包括引用的其它域的js）获取或操作另一个域上的文档属性。如：访问baidu.com，虽然包含来之google.com上的js，但是也不能修改子frame中打开的google.com上的documnet
+  b同源策略，可以发送跨域的ajax请求，但是不会有响应（此条策略是可以绕过的，即通常说的跨域请求办法）（原因：如果有响应，得到的就是跨域的data，相当于跨域访问document了，与第一条矛盾了。ajax的请求也是http请求）
+  c同源策略，可以引用其他域的js，也可以正常运行此js（与第一条同源策略并不矛盾，因为操作的是本域的文档）
+2.iframe等方式，可以加载其它域的页面，但两个域的脚本不能互相交互（原因同上）
+3.突破同源策略方法：（跨域访问）http://zhuhaifeng.javaeye.com/blog/437154
+  a.document.domain+iframe的设置 （即两个子域页面设置作用域为父域）
+  b.动态创建script （浏览器不禁止在页面中引用其他域的JS文件，即用<script>标签引入其他域的js即可,如“盗cookie、xssShell”）//不算是跨域，只是跨域的js调用
+  c.利用iframe和location.hash URL中的锚点(链接)名称
+  d.利用flash
+  e.JSONP（JSONP即JSON with Padding。由于同源策略的限制，XmlHttpRequest只允许请求当前源（域名、协议、端口）的资源。如果要进行跨域请求，我们可以通过使用html的script标记来进行跨域请求，并在响应中返回要执行的script代码，其中可以直接使用JSON传递javascript对象。这种跨域的通讯方式称为JSONP。）
+    JSONP是一种脚本注入(Script Injection)行为，需要特别注意其安全性
+注：所有的http跨域请求的页面是不可以用js访问的（即同源策略）。    
+    
+    
+*
+模式对话框
+var returnValue = window.showModalDialog('xxx.html','newwindow','dialogHeight:300px,dialogWidth:400px,center:yes,toolbar:no,menubar=no,scroll:yes, resizable:no, status:no');
+使用此方法打开一个模式窗口
+1.window.showModalDialog()运行完以后（即关闭了打开的模式窗口后）才会运行此后的js语句。
+2.刷新打开此模式窗口的父页面：可以在打开的xxx.html窗口中使用javascript:window.returnValue=1;来设置window.showModalDialog()的返回值，然后在调用window.showModalDialog()方法后面对返回值进行判断决定是否刷新页面（即window.location.reload()）
+
+
+*
+window.name
+window.name 的美妙之处：name 值在不同的页面（甚至不同域名）加载后依旧存在，并且可以支持非常长的 name 值（2MB）。 
+使用 window.name 解决跨域问题：http://tidus.javaeye.com/blog/430114
+
+
+*
+javascript支持标签，可以在循环的时候用来跳出循环用。
+
+
+*
+总结：
+0. ftest与fA是完全一样的两个Function类型的对象（var ftest=function fA(){}）
+1. 只有函数对象才有prototype属性
+2. 每个对象都有constructor
+3. var ftest2=new Function();相当于var ftest=function (){};声明一个匿名函数对象，而且都不能使用anonymous()调用此匿名函数
+4. function是关键字，Function是对象（function可以认为是定义一个Function对象的快捷方式）
+5. Function对象详解： new Function(函数体内容)－－即创建一个函数有“new Function(参数名，函数体)”和function (参数名){函数体}两种语法，其中参数名需要在函数体中出现
+6. 函数也是只是个对象而已，只是typeof时不返回object而返回function（其实object包含function）
+7. 所有的函数对象都可以再new出一个对象来，javascript中所谓的"类"就是Function类型的对象
+8. 不能查看到原生对象(如String对象)的属性，只能查看到使用prototype属性添加的属性
+9. var obj={};其实等同于var obj=new Object();都为Object类型的对象（new Object(new Date)能得到一个Date类型的对象）
+10.Object instanceof Function;Function instanceof Object;
+
+
+*
+参考文档：
+1.你可能不知道的10个JavaScript小技巧 
+http://www.cnblogs.com/lhb25/archive/2010/08/12/1797727.html
+http://172.16.1.3/bbs/viewthread.php?tid=42367
+2.
+
+
+*
+javascript高级要求
+1、了解语言的对象体系，本地对象、内置对象和宿主对象等对象类型
+2、了解如何声明和实例化对象，如何引用和废除对象，以及绑定。
+3、了解语言的对象作用域以及 this 关键字
+4、了解闭包的概念
+4、能够阅读第三方Javascript库的源码(Ext、Jquery、prototype等)。
+
+
+*
+JScript
+
+在IE中不能访问对象的__proto__属性，而在FireFox中可以访问此属性
+
+
+*
+事件的绑定：
+ 1、绑定到元素，这也是比较常见的一种比如： 
+   <input type="button" onclick="doEventThing(event)">   
+ 2、绑定事件到对象：这也是比较常见的一种，特别是在IE4+下面：
+   document.getElementById("divid").onclick = doEventThing;
+ 3、使用<script for="">进行事件的绑定，这只在IE4+下有用（为buttong1绑定事件，逻辑在script块中书写event来指定怎么触发事件）：
+   <script for="button1" event="onclick">
+      // script statements here
+   </script>
+ 4、使用 IE5/Windows 的 attachEvent() 方法     
+ 5、使用 W3C DOM 的 addEventListener() 方法
+   addEventListener("eventType",listenerReference,captureFlag);
+   第三个参数则是一个 Boolean 值，指明事件的捕获阶段，false时指在“冒泡阶段”，ture时指在“捕获阶段”，为了兼容所有的浏览器使用false（IE无事件的捕获阶段，直接由最内层元素向外层元素传递事件，而不像DOM3级规范先从最外层document开始捕获事件之后再冒泡事件）
+
+preventDefault()阻止默认的事件行为 如果是ie使用cancelable为ture
+stopPropagation() 停止事件往下传递 如果是ie使用cancelBubble为ture
+
+
+*
+模拟ie事件
+var event = document.createEventObject();
+event.screenX=100;
+event.clientX=0;
+...
+btn.fireEvent("onclick",event);
+
+
+*
+对象的bind
+
+Object.extend(Function.prototype, {   
+
+bind: function() { //此bind函数与call的作用是一样的，只是在使用上有点不一样
+if (arguments.length < 2 && Object.isUndefined(arguments[0])) return this; //测试参数长度，如无参数返回函数本身   
+var __method = this, args = $A(arguments), object = args.shift(); //内部变量__method=函数本身，args = 变量数组，object=第一个参数   
+return function() {   
+return __method.apply(object, args.concat($A(arguments))); // 返回一个新的函数，使之成为第一个参数的方法   
+}   
+
+})  
+
+注：所谓绑定，主要就是把一个对象的方法里的this绑定一个其它的对象（默认this绑定的是当前方法所在的那个对象）——其实也是函数作用域绑定
+
+
+*
+作用域
+1.var关键字决定了哪个函数是特定变量的作用域的终点
+2.作用域链是用来描述一种路径的术语,沿着该路径可以确定变量的值（查找变量最近定义的值）
+  如：function myFunction (){myVariable = 'inside';} 
+      var myVariable = 'outside'; 
+      myFunction (); 
+      alert(myVariable); //提示'inside' 
+3.内部函数即使在外部函数执行完成并终止之后,仍然可以访问其外部函数的属性--闭包
+4.javascript只有两只作用域，全局和局部（函数），没有块作用域，但是可以使用匿名函数模拟块作用域，形如：(funciton(){})();
+5.每个function被创建时都有一个prototype对象，此对象有一个属性constructor指向函数本身，而且每个函数都有自己的作用域属性scope，用来保存活动对象链（活动对象：可以认为是window对象和Function的实例对象）
+注：一个函数中的内部函数尽量不要使用外部函数的变量
+
+
+*
+this
+1.普通函数调用, this指向window
+2.对象属性调用, this指向拥有这个属性的对象
+3.通过构造函数调用this时,this指向通过构造函数生成的对象
+4.call或者apply, 这里的this是由自己指定，即call()的参数
+注：一般编程语言的this就是对象自己,JavaScript中的this并不一定是函数本身所属的对象
+
+
+*
+闭包
+ function a(){ 　　
+   var i=0; 　　
+   function b(){
+ 　　alert(++i); 　　
+   } 　　
+   return b; 　　
+ } 　　
+ var c = a(); 　　
+ c(); 
+
+函数的执行环境(excution context)
+活动对象(call object)
+作用域(scope)
+作用域链(scope chain)
+
+java是没有指向对象的引用就被GC回收，javascript有一个活动对象把对象与子对象关联在一起，所有子对象在父对象就不被GC回收，因此父对象中的变量还能被使用。
+
+变量搜索顺序是
+　　1. 先搜索自身的活动对象，如果存在则返回，如果不存在将继续搜索函数a的活动对象，依次查找，直到找到为止。
+　　2. 如果函数b存在prototype原型对象，则在查找完自身的活动对象后先查找自身的原型对象，再继续查找。这就是Javascript中的变量查找机制。
+　　3. 如果整个作用域链上都无法找到，则返回undefined。
+
+闭包作用：
+    1.保护函数内的变量安全
+    2.在内存中维持一个变量
+
+
+var getId = function() {
+	var id = 1000;
+	return function() {
+		id++;
+		return id;
+	};
+}();
+
+
+*
+callee 属性是 arguments 对象的一个成员。arguments.callee
+caller 返回一个对函数的引用，该函数调用了当前函数。functionName.caller 
+apply、call 它们的作用都是将函数绑定到另外一个对象上去运行，两者仅在定义参数方式有所区别。apply(thisArg,argArray); call(thisArg[,arg1,arg2…] ]); 
+
+
+*
+jQuery源码
+http://www.javaeye.com/topic/818329
+
+  
+*
+javascript内核
+http://www.javaeye.com/topic/492667
+扫描器(scanner):词法分析（分析单个单词，然后生成单词流）
+解析器(parser):语法分析（分析程序的语法，然后生成语法树）
+广义解析器:解析器+扫描器
+解释器(interpreter):把程序源码直接解释并执行，输出程序结果（解释器就是个黑箱，实际上很多解释器内部是以“编译器+虚拟机”的方式来实现的）
+编译器(compiler):通常输入语言比输出语言高级
+
+预处理(preprocess):
+预编译(ahead-of-time compilation，AOT):
+即时编译(just-in-time compilation，JIT):
+第一次编译(precompile header，PCH)
+
+编译型语言:是主流实现为编译成为其他语言的语言。C的解释器也是存在的，例如Ch。同样，C++也有解释器版本的实现，例如Cint
+解释型语言:（Python、Ruby、JavaScript）是主流实现为解释器的语言，但并不是说它就无法编译。其中率先支持R6RS规范的大部分内容的是Ikarus，支持在x86上编译Scheme，它最终不是生成某种虚拟机的字节码，而是直接生成x86机器码
+
+SpiderMonkey
+1.C语言实现的JavaScript脚本引擎
+2.Mozilla项目的一部分
+3.为了在SpiderMonkey中运行JavaScript代码，应用程序必须有三个要素：JSRuntime，JSContext和全局对象。
+4.JSRuntime:为其中的JavaScript变量、对象、脚本和应用程序中使用的上下文分配空间。每个JSContext和脚本中的每个对象都生活在一个 JSRuntime中。他们不能转移到其他运行时上或在与其它运行时共享。一般来说大多数应用程序只需要一个运行时环境。
+5.JSContext:就像是一台小机器，它涉及JavaScript代码和对象的很多东西。它可以编译和执行脚本、获取和设置对象属性、调用 JavaScript函数、一种类型转换为另一种JavaScript数据、创建对象，等等。几乎所有JSAPI函数都要一个JSContext*作为其第一个参数，就像<stdio.h>中的大多数函数都需要FILE*一样
+6全局对象:包含所有可以在JavaScript代码中使用的类、函数和变量
+
+
+
+
+*
+嵌入JS引擎
+有两大理由让你在应用程序中嵌入JS引擎：
+1.使用脚本来自动操作你的应用程序；
+2.同时使用JS引擎和脚本无论何时都可以提供跨平台的功能并消除了应用程序解决方案对平台的依赖性
+
+随着java6.0的出现，向java嵌入javascript脚本变的特别容易。java6引入了一个新的javax.script包，为脚本化语言提供了一个通用接口。 
+java中嵌入javascript脚本的思路：
+1.取得脚本解释器的管理器Manager 
+2.从管理器中取得js的解释器实例ScriptEngine 
+3.取得存储javascript变量的Bindings实例 
+4.把一个java.io.Reader流及Bindings传递给ScriptEngine的eval()方法，从而运行存储在外部文件中的脚本。eval()方法返回脚本运行结果，如果执行中发生错误，会抛出ScriptException异常
+
+
+*
+JavaScript语言解释器(属于js引擎的一部分,以下都是已有的js引擎名称)
+V8(Google)C++
+Spider Monkey(Mozilla)C++
+Rhino(Mozilla)Java
+JavaScript Core(Apple)C++
+...
+
+
+*
+Node.js
+http://nodejs.org/
+http://www.slideshare.net/lijing00333/node-js
+Node是一个Javascript运行环境(runtime)
+实际上它是对Google V8引擎（应用于Google Chrome浏览器)进行了封装
+
+
+*
+1.jscript运行时，即指js的运行环境
+2.浏览器弱小的权限限制了JS的表现!
+3.https://github.com/ （很多开源的js项目）
+
+
+*
+Javascript 1.7的“数组领悟”:一种写起来很方便的遍历数组的方式
+[i * i for each (i in range(0, 10))]
+
+
+*
+高阶函数
+其实高阶函数，从数学意义上说，就是参变量为一个函数。如 
+F(x,y,z)，如果令z=f(w)，那么F就是一个二阶函数(假设x,y,w都不为函数)，依次类推。 
+在数学上比较典型的高阶函数就是积分变上限函数。鼎鼎大名Fourier变换其实也是一种高阶函数变换。 
+如果了解了这个意义，推广到程序设计语言中，本质也是一样的。就是高阶函数参数可以是另一个函数，这样，就需要对函数进行一个体征抽象，而委托就是这么一种抽象。所以，C#中将委托和高阶函数结合再合适不过了。 
+
+
+*
+函数式编程：
+1.支持闭包和高阶函数（即：支持把函数当做返回值、把函数当做参数）
+2.没有副作用（即：纯粹的函数式编程无变量）
+3.支持懒惰计算（lazy evaluation）：在生成表单式的值的时候才进行计算，而不是绑定的时候
+4.使用递归作为控制流程的机制：函数式编程经常使用递归
+5.加强了引用透明性
+6.模块化编程（即：使用闭包和高阶函数结合）
+7.代表语言Lisp（现代的Lisp：scheme）
+
+注：函数式编程支持函数作为第一类对象，有时称为闭包或者仿函数（functor）对象。实质上，闭包是起函数的作用并可以像对象一样操作的对象。
+    也就是说：闭包是对象!!!
+    
+矢量编程语言：
+
+    
+*
+javascript类规范：
+1.先定义命名空间：var namespace={}
+2.再定义类名 namespace.class=function(){this.init.apply(this,arguments)};//类名大写
+3.包含一个 init(),setOptions() （构造函数中调用init()，init()中调用setOptions()）
+4.所有的静态方法写在class.prototype={}内
+5.每个函数开头 var _this = this; //与关键字或内置对象冲突的名字都加上前缀“_”
+6.为调试准备一个_debug()方法
+7.js文件间的依赖管理
+
+
+*
+模拟sleep
+	sleep : function(numberMillis) {
+		var now = new Date();
+		var exitTime = now.getTime() + numberMillis;
+		while (true) {
+			now = new Date();
+			if (now.getTime() > exitTime)
+				return;
+		}
+	}
+	
+*
+Object.hasOwnProperty
+  var s = new String("JScript");
+	print(s.hasOwnProperty("split"));//false
+	print(String.prototype.hasOwnProperty("split"));//true
+
+Object.isPrototypeOf
+  返回一个布尔值，指出对象是否存在于另一个对象的原型链中(任意哪个原型中都返回true)
+  
+in运算符
+  result = property in object 返回boolean是否包含某个属性，此属性可以是父原型链中的属性
+  for(pro in obj)可以迭代出部分对象的属性（包含自定义的父原型链中的属性）
+
+
